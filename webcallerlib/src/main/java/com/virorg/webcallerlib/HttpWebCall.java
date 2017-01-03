@@ -31,7 +31,7 @@ public class HttpWebCall extends HttpRequest {
     private OkHttp okHttp;
     private static HttpWebCall httpWebCall;
     private Context mContext;
-    private MediaType defaultMediaType = OkHttp.ContentType.FORM_URLENCODED;
+    private MediaType defaultMediaType = OkHttp.ContentType.JSON;
     private boolean isAsynchronous = true;
     private Map<String, RequestBundle> request;
 
