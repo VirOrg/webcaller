@@ -242,6 +242,36 @@ public class HttpWebCall extends HttpRequest {
 
     }
 
+    public <T> void deleteRequest(boolean isAsynchronous
+            , OkHttpRequest<T> okHttpRequest) {
+
+
+        StringBuilder completeUrl = new StringBuilder(okHttpRequest.getUrl());
+        completeUrl.append("?");
+        for (RequestParams requestParam : okHttpRequest.getRequestParams()) {
+            completeUrl.append(requestParam.getKey() + "=" + requestParam.getValue() + "&");
+        }
+
+        Request.Builder builder = new Request.Builder();
+        if (!StringUtils.isBlank(okHttpRequest.getAuthorization()))
+            builder.header("Authorization", okHttpRequest.getAuthorization());
+        builder.url(completeUrl.toString());
+        builder.tag(okHttpRequest.getTag());
+        builder.delete();
+        Request request = builder.build();
+        addWebCall(okHttpRequest.getTag(), new RequestBundle(okHttpRequest, request));
+        if (isAsynchronous) {
+            doNetworkCallAsynchronous(okHttp.getClient(), request, okHttpRequest.getResponseClass(), okHttpRequest.getCallback());
+        } else {
+            try {
+                doNetworkCallSynchronous(okHttp.getClient(), request, okHttpRequest.getResponseClass(), okHttpRequest.getCallback());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
     public <T> void multipartRequest(String url
             , String authorization
             , List<RequestParams> requestParams
