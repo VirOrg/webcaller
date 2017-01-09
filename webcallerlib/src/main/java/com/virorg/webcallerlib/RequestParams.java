@@ -10,10 +10,31 @@ package com.virorg.webcallerlib;
 public class RequestParams {
 
     private String key;
-    private String value;
+    private Object value;
+    private String stringValue;
+    private int intValue;
+    private long longValue;
+    private double doubleValue;
+    private float floatValue;
+    private boolean booleanValue;
 
-    public RequestParams(String key, String value) {
+    public RequestParams(String key, Object value) {
         this.key = key;
+
+        if(value instanceof String){
+            stringValue = (String)value;
+        }else if(value instanceof Integer){
+            intValue = (Integer) value;
+        }else if(value instanceof Long){
+            longValue = (Long) value;
+        }else if(value instanceof Float){
+            floatValue = (Float) value;
+        }else if(value instanceof Double){
+            doubleValue = (Double) value;
+        }else if(value instanceof Boolean){
+            booleanValue = (Boolean) value;
+        }
+
         this.value = value;
     }
     public RequestParams() {
@@ -29,11 +50,35 @@ public class RequestParams {
         this.key = key;
     }
 
-    public String getValue() {
+    public Object getValue() {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(Object value) {
         this.value = value;
+    }
+
+    public String getStringValue() {
+        return stringValue;
+    }
+
+    public int getIntValue() {
+        return intValue;
+    }
+
+    public long getLongValue() {
+        return longValue;
+    }
+
+    public double getDoubleValue() {
+        return doubleValue;
+    }
+
+    public float getFloatValue() {
+        return floatValue;
+    }
+
+    public boolean getBooleanValue() {
+        return booleanValue;
     }
 }

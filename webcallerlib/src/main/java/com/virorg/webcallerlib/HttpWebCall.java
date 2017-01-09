@@ -72,10 +72,37 @@ public class HttpWebCall extends HttpRequest {
             try {
                 JSONObject json = new JSONObject();
                 for (RequestParams requestParam : requestParams) {
-                    if (requestParam.getValue().contains("[")) {
-                        json.put(requestParam.getKey(), new JSONArray(requestParam.getValue()));
-                    } else {
-                        json.put(requestParam.getKey(), requestParam.getValue());
+
+                    String stringValue = "";
+                    int intValue = 0;
+                    float floatValue = 0.0f;
+                    long longValue = 0;
+                    double doubleValue = 0.0;
+                    boolean booleanValue = false;
+
+                    if (requestParam.getValue() instanceof String) {
+                        stringValue = (String) requestParam.getValue();
+                        if (stringValue.contains("[")) {
+                            json.put(requestParam.getKey(), new JSONArray(stringValue));
+                        } else {
+                            json.put(requestParam.getKey(), stringValue);
+                        }
+                    } else if (requestParam.getValue() instanceof Integer) {
+                        intValue = requestParam.getIntValue();
+                        json.put(requestParam.getKey(), intValue);
+
+                    } else if (requestParam.getValue() instanceof Long) {
+                        longValue = requestParam.getLongValue();
+                        json.put(requestParam.getKey(), longValue);
+                    } else if (requestParam.getValue() instanceof Float) {
+                        floatValue = requestParam.getFloatValue();
+                        json.put(requestParam.getKey(), floatValue);
+                    } else if (requestParam.getValue() instanceof Double) {
+                        doubleValue = requestParam.getDoubleValue();
+                        json.put(requestParam.getKey(), doubleValue);
+                    } else if (requestParam.getValue() instanceof Boolean) {
+                        booleanValue = requestParam.getBooleanValue();
+                        json.put(requestParam.getKey(), booleanValue);
                     }
                 }
                 requestBody = RequestBody.create(OkHttp.ContentType.JSON, json.toString());
@@ -85,10 +112,31 @@ public class HttpWebCall extends HttpRequest {
             }
         } else if (defaultMediaType.equals(OkHttp.ContentType.FORM_URLENCODED)) {
 
+            FormBody.Builder builder = new FormBody.Builder();
             for (RequestParams requestParam : requestParams) {
-                requestBody = new FormBody.Builder()
-                        .add(requestParam.getKey(), requestParam.getValue())
-                        .build();
+                if (((String) requestParam.getValue()).contains("[")) {
+                    try {
+                        JSONArray jsonArray = new JSONArray((String) requestParam.getValue());
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            builder.add(requestParam.getKey() + "[]", jsonArray.get(i).toString());
+
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                } else {
+                    builder.add(requestParam.getKey(), (String) requestParam.getValue());
+//                    requestBody = new FormBody.Builder()
+//                            .add(requestParam.getKey(), requestParam.getValue())
+//                            .build();
+                }
+
+                requestBody = builder.build();
+
+                /*requestBody = new FormBody.Builder()
+                        .add(requestParam.getKey(), (String) requestParam.getValue())
+                        .build();*/
             }
         }
 
@@ -120,11 +168,45 @@ public class HttpWebCall extends HttpRequest {
             try {
                 JSONObject json = new JSONObject();
                 for (RequestParams requestParam : okHttpRequest.getRequestParams()) {
-                    if (requestParam.getValue().contains("[")) {
+
+
+                    String stringValue = "";
+                    int intValue = 0;
+                    float floatValue = 0.0f;
+                    long longValue = 0;
+                    double doubleValue = 0.0;
+                    boolean booleanValue = false;
+
+                    if (requestParam.getValue() instanceof String) {
+                        stringValue = (String) requestParam.getValue();
+                        if (stringValue.contains("[")) {
+                            json.put(requestParam.getKey(), new JSONArray(stringValue));
+                        } else {
+                            json.put(requestParam.getKey(), stringValue);
+                        }
+                    } else if (requestParam.getValue() instanceof Integer) {
+                        intValue = requestParam.getIntValue();
+                        json.put(requestParam.getKey(), intValue);
+
+                    } else if (requestParam.getValue() instanceof Long) {
+                        longValue = requestParam.getLongValue();
+                        json.put(requestParam.getKey(), longValue);
+                    } else if (requestParam.getValue() instanceof Float) {
+                        floatValue = requestParam.getFloatValue();
+                        json.put(requestParam.getKey(), floatValue);
+                    } else if (requestParam.getValue() instanceof Double) {
+                        doubleValue = requestParam.getDoubleValue();
+                        json.put(requestParam.getKey(), doubleValue);
+                    } else if (requestParam.getValue() instanceof Boolean) {
+                        booleanValue = requestParam.getBooleanValue();
+                        json.put(requestParam.getKey(), booleanValue);
+                    }
+
+                   /* if (requestParam.getValue().contains("[")) {
                         json.put(requestParam.getKey(), new JSONArray(requestParam.getValue()));
                     } else {
                         json.put(requestParam.getKey(), requestParam.getValue());
-                    }
+                    }*/
                 }
                 requestBody = RequestBody.create(OkHttp.ContentType.JSON, json.toString());
 
@@ -134,9 +216,9 @@ public class HttpWebCall extends HttpRequest {
         } else if (defaultMediaType.equals(OkHttp.ContentType.FORM_URLENCODED)) {
             FormBody.Builder builder = new FormBody.Builder();
             for (RequestParams requestParam : okHttpRequest.getRequestParams()) {
-                if (requestParam.getValue().contains("[")) {
+                if (((String) requestParam.getValue()).contains("[")) {
                     try {
-                        JSONArray jsonArray = new JSONArray(requestParam.getValue());
+                        JSONArray jsonArray = new JSONArray((String) requestParam.getValue());
                         for (int i = 0; i < jsonArray.length(); i++) {
                             builder.add(requestParam.getKey() + "[]", jsonArray.get(i).toString());
 
@@ -146,11 +228,12 @@ public class HttpWebCall extends HttpRequest {
                     }
 
                 } else {
-                    builder.add(requestParam.getKey(), requestParam.getValue());
+                    builder.add(requestParam.getKey(), (String) requestParam.getValue());
 //                    requestBody = new FormBody.Builder()
 //                            .add(requestParam.getKey(), requestParam.getValue())
 //                            .build();
                 }
+
 
             }
             requestBody = builder.build();
@@ -284,14 +367,14 @@ public class HttpWebCall extends HttpRequest {
         MultipartBody.Builder multiPartBuilder = new MultipartBody.Builder();
         multiPartBuilder.setType(MultipartBody.FORM);
         for (RequestParams requestParam : requestParams) {
-            multiPartBuilder.addFormDataPart(requestParam.getKey(), requestParam.getValue());
+            multiPartBuilder.addFormDataPart(requestParam.getKey(), (String) requestParam.getValue());
         }
 
         for (RequestParams requestParam : media) {
             multiPartBuilder.addFormDataPart(requestParam.getKey()
-                    , getMediaName(requestParam.getValue())
-                    , RequestBody.create(MediaType.parse(ContentType.autoDetect(requestParam.getValue()))
-                            , new File(requestParam.getValue())));
+                    , getMediaName((String) requestParam.getValue())
+                    , RequestBody.create(MediaType.parse(ContentType.autoDetect((String) requestParam.getValue()))
+                            , new File((String) requestParam.getValue())));
         }
 
         RequestBody requestBody = multiPartBuilder.build();
@@ -315,14 +398,14 @@ public class HttpWebCall extends HttpRequest {
         MultipartBody.Builder multiPartBuilder = new MultipartBody.Builder();
         multiPartBuilder.setType(MultipartBody.FORM);
         for (RequestParams requestParam : okHttpRequest.getRequestParams()) {
-            multiPartBuilder.addFormDataPart(requestParam.getKey(), requestParam.getValue());
+            multiPartBuilder.addFormDataPart(requestParam.getKey(), (String) requestParam.getValue());
         }
 
         for (RequestParams requestParam : okHttpRequest.getMedia()) {
             multiPartBuilder.addFormDataPart(requestParam.getKey()
-                    , getMediaName(requestParam.getValue())
-                    , RequestBody.create(MediaType.parse(ContentType.autoDetect(requestParam.getValue()))
-                            , new File(requestParam.getValue())));
+                    , getMediaName((String) requestParam.getValue())
+                    , RequestBody.create(MediaType.parse(ContentType.autoDetect((String) requestParam.getValue()))
+                            , new File((String) requestParam.getValue())));
         }
 
         RequestBody requestBody = multiPartBuilder.build();
