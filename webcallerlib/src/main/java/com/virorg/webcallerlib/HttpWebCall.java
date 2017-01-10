@@ -41,6 +41,12 @@ public class HttpWebCall extends HttpRequest {
         request = new HashMap<String, RequestBundle>();
     }
 
+    /**
+     * Get Instance of the class
+     *
+     * @param context: context
+     */
+
     public static HttpWebCall getInstance(Context context) {
 
         if (httpWebCall == null) {
@@ -52,14 +58,35 @@ public class HttpWebCall extends HttpRequest {
     }
 
 
+    /**
+     * method to set media type of web call
+     *
+     * @param mediaType: mediatype might be Form UrlEncoded or JSON {@link  OkHttp.ContentType}
+     */
+
     public void setMediaType(MediaType mediaType) {
         defaultMediaType = mediaType;
     }
 
+    /**
+     * method to set web call type, Should call be made synchronously or asynchronously
+     *
+     * @param isAsynchronous: boolean to set call type
+     */
     public void setCallType(boolean isAsynchronous) {
         this.isAsynchronous = isAsynchronous;
     }
 
+    /**
+     * Method to call web api having POST signature
+     *
+     * @param url:           url of the call
+     * @param authorization: authorization token of web call if required then send it otherwise null
+     * @param requestParams: list of request parameter, {@link RequestParams} RequestParam contains key value pair of parameters required with web call
+     * @param tag:           unique identifier of every request
+     * @param responseClass: In which class, response should be parsed
+     * @param callback:      listener when notify when request has been processed from the server
+     */
     public <T> void postRequest(String url
             , String authorization
             , List<RequestParams> requestParams
@@ -160,6 +187,12 @@ public class HttpWebCall extends HttpRequest {
 
     }
 
+    /**
+     * Method to call web api having POST signature (This method contains {@link OkHttpRequest} as a parameter)
+     *
+     * @param isAsynchronous: will call be synchronous or asynchronous
+     * @param okHttpRequest:  web call essential parameter lies in this object
+     */
     public <T> void postRequest(boolean isAsynchronous
             , OkHttpRequest<T> okHttpRequest) {
 
@@ -259,6 +292,16 @@ public class HttpWebCall extends HttpRequest {
 
     }
 
+    /**
+     * Method to call web api having GET signature
+     *
+     * @param url:           url of the call
+     * @param authorization: authorization token of web call if required then send it otherwise null
+     * @param requestParams: list of request parameter, {@link RequestParams} RequestParam contains key value pair of parameters required with web call
+     * @param tag:           unique identifier of every request
+     * @param responseClass: In which class, response should be parsed
+     * @param callback:      listener when notify when request has been processed from the server
+     */
     public <T> void getRequest(String url
             , String authorization
             , List<RequestParams> requestParams
@@ -296,6 +339,12 @@ public class HttpWebCall extends HttpRequest {
 
     }
 
+    /**
+     * Method to call web api having GET signature (This method contains {@link OkHttpRequest} as a parameter)
+     *
+     * @param isAsynchronous: will call be synchronous or asynchronous
+     * @param okHttpRequest:  web call essential parameter lies in this object
+     */
     public <T> void getRequest(boolean isAsynchronous
             , OkHttpRequest<T> okHttpRequest) {
 
@@ -330,6 +379,12 @@ public class HttpWebCall extends HttpRequest {
 
     }
 
+    /**
+     * Method to call web api having DELETE signature (This method contains {@link OkHttpRequest} as a parameter)
+     *
+     * @param isAsynchronous: will call be synchronous or asynchronous
+     * @param okHttpRequest:  web call essential parameter lies in this object
+     */
     public <T> void deleteRequest(boolean isAsynchronous
             , OkHttpRequest<T> okHttpRequest) {
 
@@ -365,6 +420,17 @@ public class HttpWebCall extends HttpRequest {
 
     }
 
+    /**
+     * Method to call web api when multipart data needs to sent
+     *
+     * @param url:           url of the call
+     * @param authorization: authorization token of web call if required then send it otherwise null
+     * @param requestParams: list of request parameter, {@link RequestParams} RequestParam contains key value pair of parameters required with web call
+     * @param media:         list of media(pictures, videos etc.) which has to be sent on server
+     * @param tag:           unique identifier of every request
+     * @param responseClass: In which class, response should be parsed
+     * @param callback:      listener when notify when request has been processed from the server
+     */
     public <T> void multipartRequest(String url
             , String authorization
             , List<RequestParams> requestParams
@@ -402,6 +468,12 @@ public class HttpWebCall extends HttpRequest {
         doNetworkCallAsynchronous(okHttp.getClient(), request, responseClass, callback);
     }
 
+    /**
+     * Method to call web api when multipart data needs to sent
+     *
+     * @param isAsynchronous: will call be synchronous or asynchronous
+     * @param okHttpRequest:  web call essential parameter lies in this object
+     */
     public <T> void multipartRequest(boolean isAsynchronous
             , OkHttpRequest<T> okHttpRequest) {
 
@@ -470,7 +542,7 @@ public class HttpWebCall extends HttpRequest {
         });
     }
 
-    public <T> void doNetworkCallAsynchronous(RequestBundle<T> requestBundle) {
+    private <T> void doNetworkCallAsynchronous(RequestBundle<T> requestBundle) {
         doNetworkCallAsynchronous(okHttp.getClient()
                 , requestBundle.getRequest()
                 , requestBundle.getOkHttpRequest().getResponseClass()
@@ -503,7 +575,7 @@ public class HttpWebCall extends HttpRequest {
     }
 
 
-    public void addWebCall(String tag, RequestBundle requestBundle) {
+    private void addWebCall(String tag, RequestBundle requestBundle) {
         if (!request.containsKey(tag)) {
             request.put(tag, requestBundle);
         } else {
@@ -512,13 +584,19 @@ public class HttpWebCall extends HttpRequest {
         }
     }
 
-    public void deleteWebCall(String tag) {
+    private void deleteWebCall(String tag) {
         if (!request.containsKey(tag)) {
             request.remove(tag);
         }
     }
 
-    public void cancelCalls(String tag) {
+
+    /**
+     * method to cancel web call with tag
+     *
+     * @param tag : tag of web call
+     */
+    public void cancelCall(String tag) {
         for (Call call : okHttp.getClient().dispatcher().queuedCalls()) {
             if (call.request().tag().equals(tag))
                 call.cancel();
@@ -529,16 +607,28 @@ public class HttpWebCall extends HttpRequest {
         }
     }
 
+    /**
+     * method to cancel all web calls
+     */
     public void cancelAllCall() {
         okHttp.getClient().dispatcher().cancelAll();
     }
 
+    /**
+     * method to return {@link RequestBundle} w.r.t. tag
+     *
+     * @return requestBundle
+     */
     public RequestBundle getRequestBundle(String tag) {
         if (request.isEmpty()) throw new IllegalStateException("request stack is empty");
         RequestBundle requestBundle = request.get(tag);
         return requestBundle;
     }
 
+    /**
+     * Class that contain every web call information i.e. the web call request
+     * which is build at time of making call
+     */
     public static class RequestBundle<T> {
         private OkHttpRequest<T> okHttpRequest;
         private Request request;
