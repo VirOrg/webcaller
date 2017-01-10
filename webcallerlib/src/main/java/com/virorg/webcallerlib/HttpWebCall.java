@@ -309,7 +309,12 @@ public class HttpWebCall extends HttpRequest {
         Request.Builder builder = new Request.Builder();
         if (!StringUtils.isBlank(okHttpRequest.getAuthorization()))
             builder.header("Authorization", okHttpRequest.getAuthorization());
-        builder.url(completeUrl.toString());
+        String url = completeUrl.toString();
+        int lastIndex = url.lastIndexOf("&");
+        if (lastIndex > 0) {
+            url = url.substring(0, lastIndex);
+        }
+        builder.url(url);
         builder.tag(okHttpRequest.getTag());
         Request request = builder.build();
         addWebCall(okHttpRequest.getTag(), new RequestBundle(okHttpRequest, request));
@@ -338,7 +343,12 @@ public class HttpWebCall extends HttpRequest {
         Request.Builder builder = new Request.Builder();
         if (!StringUtils.isBlank(okHttpRequest.getAuthorization()))
             builder.header("Authorization", okHttpRequest.getAuthorization());
-        builder.url(completeUrl.toString());
+        String url = completeUrl.toString();
+        int lastIndex = url.lastIndexOf("&");
+        if (lastIndex > 0) {
+            url = url.substring(0, lastIndex);
+        }
+        builder.url(url);
         builder.tag(okHttpRequest.getTag());
         builder.delete();
         Request request = builder.build();
