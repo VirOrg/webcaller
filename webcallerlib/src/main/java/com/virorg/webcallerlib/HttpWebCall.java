@@ -82,14 +82,15 @@ public class HttpWebCall extends HttpRequest {
      *
      * @param url:           url of the call
      * @param authorization: authorization token of web call if required then send it otherwise null
-     * @param requestParams: list of request parameter, {@link RequestParams} RequestParam contains key value pair of parameters required with web call
+     * @param requestParams: list of request parameter, {@link ContentValue} RequestParam contains key value pair of parameters required with web call
      * @param tag:           unique identifier of every request
      * @param responseClass: In which class, response should be parsed
      * @param callback:      listener when notify when request has been processed from the server
      */
+    @Deprecated
     public <T> void postRequest(String url
             , String authorization
-            , List<RequestParams> requestParams
+            , List<ContentValue> requestParams
             , String tag
             , Class<T> responseClass
             , ApiCallBack<T> callback) {
@@ -98,7 +99,7 @@ public class HttpWebCall extends HttpRequest {
         if (defaultMediaType.equals(OkHttp.ContentType.JSON)) {
             try {
                 JSONObject json = new JSONObject();
-                for (RequestParams requestParam : requestParams) {
+                for (ContentValue requestParam : requestParams) {
 
                     String stringValue = "";
                     int intValue = 0;
@@ -140,7 +141,7 @@ public class HttpWebCall extends HttpRequest {
         } else if (defaultMediaType.equals(OkHttp.ContentType.FORM_URLENCODED)) {
 
             FormBody.Builder builder = new FormBody.Builder();
-            for (RequestParams requestParam : requestParams) {
+            for (ContentValue requestParam : requestParams) {
                 if (((String) requestParam.getValue()).contains("[")) {
                     try {
                         JSONArray jsonArray = new JSONArray((String) requestParam.getValue());
@@ -200,7 +201,7 @@ public class HttpWebCall extends HttpRequest {
         if (defaultMediaType.equals(OkHttp.ContentType.JSON)) {
             try {
                 JSONObject json = new JSONObject();
-                for (RequestParams requestParam : okHttpRequest.getRequestParams()) {
+                for (ContentValue requestParam : okHttpRequest.getRequestParams()) {
 
 
                     String stringValue = "";
@@ -248,7 +249,7 @@ public class HttpWebCall extends HttpRequest {
             }
         } else if (defaultMediaType.equals(OkHttp.ContentType.FORM_URLENCODED)) {
             FormBody.Builder builder = new FormBody.Builder();
-            for (RequestParams requestParam : okHttpRequest.getRequestParams()) {
+            for (ContentValue requestParam : okHttpRequest.getRequestParams()) {
                 if (((String) requestParam.getValue()).contains("[")) {
                     try {
                         JSONArray jsonArray = new JSONArray((String) requestParam.getValue());
@@ -273,6 +274,11 @@ public class HttpWebCall extends HttpRequest {
         }
 
         Request.Builder builder = new Request.Builder();
+        if (okHttpRequest.getListOfHeader() != null) {
+            for (ContentValue contentValue : okHttpRequest.getListOfHeader()) {
+                builder.addHeader(contentValue.getKey(), contentValue.getStringValue());
+            }
+        }
         if (!StringUtils.isBlank(okHttpRequest.getAuthorization()))
             builder.header("Authorization", okHttpRequest.getAuthorization());
         builder.url(okHttpRequest.getUrl());
@@ -297,14 +303,15 @@ public class HttpWebCall extends HttpRequest {
      *
      * @param url:           url of the call
      * @param authorization: authorization token of web call if required then send it otherwise null
-     * @param requestParams: list of request parameter, {@link RequestParams} RequestParam contains key value pair of parameters required with web call
+     * @param requestParams: list of request parameter, {@link ContentValue} RequestParam contains key value pair of parameters required with web call
      * @param tag:           unique identifier of every request
      * @param responseClass: In which class, response should be parsed
      * @param callback:      listener when notify when request has been processed from the server
      */
+    @Deprecated
     public <T> void getRequest(String url
             , String authorization
-            , List<RequestParams> requestParams
+            , List<ContentValue> requestParams
             , String tag
             , Class<T> responseClass
             , ApiCallBack<T> callback) {
@@ -314,13 +321,14 @@ public class HttpWebCall extends HttpRequest {
         if (requestParams != null && requestParams.size() > 0)
             completeUrl.append("?");
         String prefix = "";
-        for (RequestParams requestParam : requestParams) {
+        for (ContentValue requestParam : requestParams) {
             completeUrl.append(prefix);
             prefix = "&";
             completeUrl.append(requestParam.getKey() + "=" + requestParam.getValue());
         }
 
         Request.Builder builder = new Request.Builder();
+
         if (!StringUtils.isBlank(authorization))
             builder.header("Authorization", authorization);
         builder.url(url);
@@ -351,11 +359,16 @@ public class HttpWebCall extends HttpRequest {
 
         StringBuilder completeUrl = new StringBuilder(okHttpRequest.getUrl());
         completeUrl.append("?");
-        for (RequestParams requestParam : okHttpRequest.getRequestParams()) {
+        for (ContentValue requestParam : okHttpRequest.getRequestParams()) {
             completeUrl.append(requestParam.getKey() + "=" + requestParam.getValue() + "&");
         }
 
         Request.Builder builder = new Request.Builder();
+        if (okHttpRequest.getListOfHeader() != null) {
+            for (ContentValue contentValue : okHttpRequest.getListOfHeader()) {
+                builder.addHeader(contentValue.getKey(), contentValue.getStringValue());
+            }
+        }
         if (!StringUtils.isBlank(okHttpRequest.getAuthorization()))
             builder.header("Authorization", okHttpRequest.getAuthorization());
         String url = completeUrl.toString();
@@ -391,11 +404,16 @@ public class HttpWebCall extends HttpRequest {
 
         StringBuilder completeUrl = new StringBuilder(okHttpRequest.getUrl());
         completeUrl.append("?");
-        for (RequestParams requestParam : okHttpRequest.getRequestParams()) {
+        for (ContentValue requestParam : okHttpRequest.getRequestParams()) {
             completeUrl.append(requestParam.getKey() + "=" + requestParam.getValue() + "&");
         }
 
         Request.Builder builder = new Request.Builder();
+        if (okHttpRequest.getListOfHeader() != null) {
+            for (ContentValue contentValue : okHttpRequest.getListOfHeader()) {
+                builder.addHeader(contentValue.getKey(), contentValue.getStringValue());
+            }
+        }
         if (!StringUtils.isBlank(okHttpRequest.getAuthorization()))
             builder.header("Authorization", okHttpRequest.getAuthorization());
         String url = completeUrl.toString();
@@ -425,16 +443,17 @@ public class HttpWebCall extends HttpRequest {
      *
      * @param url:           url of the call
      * @param authorization: authorization token of web call if required then send it otherwise null
-     * @param requestParams: list of request parameter, {@link RequestParams} RequestParam contains key value pair of parameters required with web call
+     * @param requestParams: list of request parameter, {@link ContentValue} RequestParam contains key value pair of parameters required with web call
      * @param media:         list of media(pictures, videos etc.) which has to be sent on server
      * @param tag:           unique identifier of every request
      * @param responseClass: In which class, response should be parsed
      * @param callback:      listener when notify when request has been processed from the server
      */
+    @Deprecated
     public <T> void multipartRequest(String url
             , String authorization
-            , List<RequestParams> requestParams
-            , List<RequestParams> media
+            , List<ContentValue> requestParams
+            , List<ContentValue> media
             , String tag
             , Class<T> responseClass
             , ApiCallBack<T> callback) {
@@ -442,11 +461,11 @@ public class HttpWebCall extends HttpRequest {
 
         MultipartBody.Builder multiPartBuilder = new MultipartBody.Builder();
         multiPartBuilder.setType(MultipartBody.FORM);
-        for (RequestParams requestParam : requestParams) {
+        for (ContentValue requestParam : requestParams) {
             multiPartBuilder.addFormDataPart(requestParam.getKey(), (String) requestParam.getValue());
         }
 
-        for (RequestParams requestParam : media) {
+        for (ContentValue requestParam : media) {
             multiPartBuilder.addFormDataPart(requestParam.getKey()
                     , getMediaName((String) requestParam.getValue())
                     , RequestBody.create(MediaType.parse(ContentType.autoDetect((String) requestParam.getValue()))
@@ -479,11 +498,11 @@ public class HttpWebCall extends HttpRequest {
 
         MultipartBody.Builder multiPartBuilder = new MultipartBody.Builder();
         multiPartBuilder.setType(MultipartBody.FORM);
-        for (RequestParams requestParam : okHttpRequest.getRequestParams()) {
+        for (ContentValue requestParam : okHttpRequest.getRequestParams()) {
             multiPartBuilder.addFormDataPart(requestParam.getKey(), (String) requestParam.getValue());
         }
 
-        for (RequestParams requestParam : okHttpRequest.getMedia()) {
+        for (ContentValue requestParam : okHttpRequest.getMedia()) {
             multiPartBuilder.addFormDataPart(requestParam.getKey()
                     , getMediaName((String) requestParam.getValue())
                     , RequestBody.create(MediaType.parse(ContentType.autoDetect((String) requestParam.getValue()))
@@ -494,6 +513,11 @@ public class HttpWebCall extends HttpRequest {
 
 
         Request.Builder builder = new Request.Builder();
+        if (okHttpRequest.getListOfHeader() != null) {
+            for (ContentValue contentValue : okHttpRequest.getListOfHeader()) {
+                builder.addHeader(contentValue.getKey(), contentValue.getStringValue());
+            }
+        }
         if (!StringUtils.isBlank(okHttpRequest.getAuthorization()))
             builder.header("Authorization", okHttpRequest.getAuthorization());
         builder.url(okHttpRequest.getUrl());

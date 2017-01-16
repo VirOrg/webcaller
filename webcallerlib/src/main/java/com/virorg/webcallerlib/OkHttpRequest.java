@@ -10,16 +10,18 @@ import java.util.List;
 public class OkHttpRequest<T> {
     private String url;
     private String authorization;
-    private List<RequestParams> requestParams;
-    private List<RequestParams> media;
+    private List<ContentValue> requestParams;
+    private List<ContentValue> media;
     private String tag;
     private Class<T> responseClass;
     private ApiCallBack<T> callback;
+    private List<ContentValue> listOfHeader;
 
     public OkHttpRequest(Builder builder) {
         url = builder.url;
         authorization = builder.authorization;
         requestParams = builder.requestParams;
+        listOfHeader = builder.listOfHeader;
         media = builder.media;
         tag = builder.tag;
         responseClass = builder.responseClass;
@@ -35,12 +37,20 @@ public class OkHttpRequest<T> {
         return authorization;
     }
 
-    public List<RequestParams> getRequestParams() {
+    public List<ContentValue> getRequestParams() {
         return requestParams;
     }
 
-    public List<RequestParams> getMedia() {
+    public List<ContentValue> getMedia() {
         return media;
+    }
+
+    public List<ContentValue> getListOfHeader() {
+        return listOfHeader;
+    }
+
+    public void setListOfHeader(List<ContentValue> listOfHeader) {
+        this.listOfHeader = listOfHeader;
     }
 
     public String getTag() {
@@ -59,17 +69,19 @@ public class OkHttpRequest<T> {
 
         private String url;
         private String authorization;
-        private List<RequestParams> requestParams;
-        private List<RequestParams> media;
+        private List<ContentValue> requestParams;
+        private List<ContentValue> media;
         private String tag;
         private Class<T> responseClass;
         private ApiCallBack<T> callback;
+        private List<ContentValue> listOfHeader;
 
         public Builder() {
             url = "";
             authorization = "";
-            requestParams = new ArrayList<RequestParams>();
-            media = new ArrayList<RequestParams>();
+            requestParams = new ArrayList<ContentValue>();
+            listOfHeader = new ArrayList<ContentValue>();
+            media = new ArrayList<ContentValue>();
             tag = "";
             responseClass = null;
             callback = null;
@@ -80,17 +92,18 @@ public class OkHttpRequest<T> {
             return this;
         }
 
+        @Deprecated
         public Builder setAuthorization(String authorization) {
             this.authorization = authorization;
             return this;
         }
 
-        public Builder setRequestParams(List<RequestParams> requestParams) {
+        public Builder setRequestParams(List<ContentValue> requestParams) {
             this.requestParams = requestParams;
             return this;
         }
 
-        public Builder setMedia(List<RequestParams> requestParams) {
+        public Builder setMedia(List<ContentValue> requestParams) {
             this.media = requestParams;
             return this;
         }
@@ -107,6 +120,11 @@ public class OkHttpRequest<T> {
 
         public Builder setCallBack(ApiCallBack<?> callback) {
             this.callback = (ApiCallBack<T>) callback;
+            return this;
+        }
+
+        public Builder setHeader(List<ContentValue> listOfHeader) {
+            this.listOfHeader = listOfHeader;
             return this;
         }
 

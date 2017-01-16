@@ -7,7 +7,7 @@ package com.virorg.webcallerlib;
 /**
  * that model class contains the request parameters of web call in key value pairs
  */
-public class RequestParams {
+public class ContentValue {
 
     private String key;
     private Object value;
@@ -18,7 +18,7 @@ public class RequestParams {
     private float floatValue;
     private boolean booleanValue;
 
-    public RequestParams(String key, Object value) {
+    public ContentValue(String key, Object value) {
         this.key = key;
 
         if(value instanceof String){
@@ -37,7 +37,7 @@ public class RequestParams {
 
         this.value = value;
     }
-    public RequestParams() {
+    public ContentValue() {
         this.key = null;
         this.value = null;
     }

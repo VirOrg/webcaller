@@ -17,7 +17,7 @@ import android.view.View;
 import com.virorg.webcallerlib.ApiCallBack;
 import com.virorg.webcallerlib.HttpWebCall;
 import com.virorg.webcallerlib.OkHttpRequest;
-import com.virorg.webcallerlib.RequestParams;
+import com.virorg.webcallerlib.ContentValue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void sampleGetCall() {
-        List<RequestParams> list = new ArrayList<RequestParams>();
+        List<ContentValue> list = new ArrayList<ContentValue>();
         final OkHttpRequest.Builder builder = new OkHttpRequest.Builder<Object>()
                 .setUrl("http://publicobject.com/helloworld.txt")
 //                .setAuthorization("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImJAeWFob28uY29tIiwidXNlcklkIjoiNTczZWE4NDg1ZTYwMGNlMjc5Y2JlNjFlIiwiaWF0IjoxNDgyMjI3NzMxfQ.4MOx9iUBQtaKSXO7p2aUCCTKCS0zcBkWVyPx3kYcf98")
@@ -108,8 +108,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void samplePostCall() {
-        List<RequestParams> list = new ArrayList<RequestParams>();
-        RequestParams req2 = new RequestParams();
+        List<ContentValue> list = new ArrayList<ContentValue>();
+        ContentValue req2 = new ContentValue();
         req2.setKey("search");
         req2.setValue("Jurassic Park dgsdgfsd");
         list.add(req2);
@@ -145,8 +145,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void sampleMultipartCall() {
-        List<RequestParams> mediaList = new ArrayList<RequestParams>();
-        mediaList.add(new RequestParams("media", filePath));
+        List<ContentValue> mediaList = new ArrayList<ContentValue>();
+        mediaList.add(new ContentValue("media", filePath));
         //HttpWebCall httpWebCall = HttpWebCall.getInstance(this);
         final OkHttpRequest.Builder builder = new OkHttpRequest.Builder<Object>()
                 .setUrl("https://api.imgur.com/3/image")
