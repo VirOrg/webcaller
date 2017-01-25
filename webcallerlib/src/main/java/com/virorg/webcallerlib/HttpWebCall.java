@@ -537,7 +537,7 @@ public class HttpWebCall extends HttpRequest {
         return mediaName;
     }
 
-    private <T> void doNetworkCallAsynchronous(OkHttpClient client,
+    public <T> void doNetworkCallAsynchronous(OkHttpClient client,
                                                Request request,
                                                final Class<T> responseClass
             , final ApiCallBack<T> callback
@@ -566,14 +566,14 @@ public class HttpWebCall extends HttpRequest {
         });
     }
 
-    private <T> void doNetworkCallAsynchronous(RequestBundle<T> requestBundle) {
+    public   <T> void doNetworkCallAsynchronous(RequestBundle<T> requestBundle) {
         doNetworkCallAsynchronous(okHttp.getClient()
                 , requestBundle.getRequest()
                 , requestBundle.getOkHttpRequest().getResponseClass()
                 , requestBundle.getOkHttpRequest().getCallback());
     }
 
-    private <T> void doNetworkCallSynchronous(OkHttpClient client,
+    public <T> void doNetworkCallSynchronous(OkHttpClient client,
                                               Request request,
                                               final Class<T> responseClass
             , final ApiCallBack<T> callback) throws IOException {
