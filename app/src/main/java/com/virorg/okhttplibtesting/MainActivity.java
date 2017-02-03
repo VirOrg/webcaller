@@ -183,10 +183,13 @@ public class MainActivity extends AppCompatActivity {
         showLoader();
         List<ContentValue> mediaList = new ArrayList<ContentValue>();
         mediaList.add(new ContentValue("media", filePath));
+
+        List<ContentValue> headerList = new ArrayList<ContentValue>();
+        headerList.add(new ContentValue("Authorization", "Client-ID ..."));
         //HttpWebCall httpWebCall = HttpWebCall.getInstance(this);
         final OkHttpRequest.Builder builder = new OkHttpRequest.Builder<Object>()
                 .setUrl("https://api.imgur.com/3/image")
-                .setAuthorization("Client-ID ...")
+                .setHeader(headerList)
                 .setTag("multipart_call")
 //                .setRequestParams(list)
                 .setMedia(mediaList)
