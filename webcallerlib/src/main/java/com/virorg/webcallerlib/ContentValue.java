@@ -82,3 +82,4 @@ public class ContentValue {
         return booleanValue;
     }
 }
+

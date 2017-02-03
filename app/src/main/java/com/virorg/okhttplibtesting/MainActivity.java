@@ -5,19 +5,19 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-
+import android.widget.Toast;
 
 import com.virorg.webcallerlib.ApiCallBack;
+import com.virorg.webcallerlib.ContentValue;
 import com.virorg.webcallerlib.HttpWebCall;
 import com.virorg.webcallerlib.OkHttpRequest;
-import com.virorg.webcallerlib.ContentValue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private Uri mImageUri;
     public final static int PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 4;
     final HttpWebCall httpWebCall = HttpWebCall.getInstance(this);
+    private ProgressDialog progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,10 +73,30 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void reTryCall() {
-        httpWebCall.doNetworkCallAsynchronous(httpWebCall.getRequestBundle("get_call"));
+        try {
+            httpWebCall.doNetworkCallAsynchronous(httpWebCall.getRequestBundle("get_call"));
+        } catch (Exception e) {
+            Toast.makeText(this, "Request stack is empty.", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
+    }
+
+    public void showLoader() {
+        progressBar = new ProgressDialog(this);
+        progressBar.setCancelable(false);
+        progressBar.setMessage("Loading....");
+        progressBar.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressBar.show();
+    }
+
+
+    /*hide loader */
+    public void hideLoader() {
+        progressBar.dismiss();
     }
 
     private void sampleGetCall() {
+        showLoader();
         List<ContentValue> list = new ArrayList<ContentValue>();
         final OkHttpRequest.Builder builder = new OkHttpRequest.Builder<Object>()
                 .setUrl("http://publicobject.com/helloworld.txt")
@@ -92,15 +113,21 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void run() {
                                 showDialog(actualResponse);
+                                hideLoader();
                             }
                         });
 
                     }
 
                     @Override
-                    public void onFail(Exception e) {
-
-
+                    public void onFail(final Exception e) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                showDialog(e.getMessage());
+                                hideLoader();
+                            }
+                        });
                     }
                 });
         OkHttpRequest okHttpRequest = builder.build();
@@ -108,6 +135,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void samplePostCall() {
+        showLoader();
         List<ContentValue> list = new ArrayList<ContentValue>();
         ContentValue req2 = new ContentValue();
         req2.setKey("search");
@@ -129,15 +157,22 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void run() {
                                 showDialog(actualResponse);
+                                hideLoader();
                             }
                         });
 
                     }
 
                     @Override
-                    public void onFail(Exception e) {
+                    public void onFail(final Exception e) {
 
-
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                showDialog(e.getMessage());
+                                hideLoader();
+                            }
+                        });
                     }
                 });
         OkHttpRequest okHttpRequest = builder.build();
@@ -145,6 +180,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void sampleMultipartCall() {
+        showLoader();
         List<ContentValue> mediaList = new ArrayList<ContentValue>();
         mediaList.add(new ContentValue("media", filePath));
         //HttpWebCall httpWebCall = HttpWebCall.getInstance(this);
@@ -164,15 +200,22 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void run() {
                                 showDialog(actualResponse);
+                                hideLoader();
                             }
                         });
 
                     }
 
                     @Override
-                    public void onFail(Exception e) {
+                    public void onFail(final Exception e) {
 
-
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                showDialog(e.getMessage());
+                                hideLoader();
+                            }
+                        });
                     }
                 });
         OkHttpRequest okHttpRequest = builder.build();
