@@ -365,6 +365,12 @@ public class HttpWebCall extends HttpRequest {
         }
 
         Request.Builder builder = new Request.Builder();
+        if (okHttpRequest.getListOfHeader() != null) {
+            for (ContentValue contentValue : okHttpRequest.getListOfHeader()) {
+                builder.addHeader(contentValue.getKey(), contentValue.getStringValue());
+            }
+        }
+
         if (!StringUtils.isBlank(okHttpRequest.getAuthorization()))
             builder.header("Authorization", okHttpRequest.getAuthorization());
         String url = completeUrl.toString();
@@ -534,8 +540,8 @@ public class HttpWebCall extends HttpRequest {
     }
 
     public <T> void doNetworkCallAsynchronous(OkHttpClient client,
-                                               Request request,
-                                               final Class<T> responseClass
+                                              Request request,
+                                              final Class<T> responseClass
             , final ApiCallBack<T> callback
     ) {
 
@@ -570,8 +576,8 @@ public class HttpWebCall extends HttpRequest {
     }
 
     public <T> void doNetworkCallSynchronous(OkHttpClient client,
-                                              Request request,
-                                              final Class<T> responseClass
+                                             Request request,
+                                             final Class<T> responseClass
             , final ApiCallBack<T> callback) throws IOException {
         Response response = null;
         try {

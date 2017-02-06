@@ -98,11 +98,14 @@ public class MainActivity extends AppCompatActivity {
     private void sampleGetCall() {
         showLoader();
         List<ContentValue> list = new ArrayList<ContentValue>();
+        list.add(new ContentValue("ABC", "XYZ"));
+        list.add(new ContentValue("DEF", "UVW"));
         final OkHttpRequest.Builder builder = new OkHttpRequest.Builder<Object>()
                 .setUrl("http://publicobject.com/helloworld.txt")
 //                .setAuthorization("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImJAeWFob28uY29tIiwidXNlcklkIjoiNTczZWE4NDg1ZTYwMGNlMjc5Y2JlNjFlIiwiaWF0IjoxNDgyMjI3NzMxfQ.4MOx9iUBQtaKSXO7p2aUCCTKCS0zcBkWVyPx3kYcf98")
                 .setTag("get_call")
 //                .setRequestParams(list)
+                .setHeader(list)
                 .setResponseClass(Object.class)
                 .setCallBack(new ApiCallBack<Object>(this, getProgressDiaLog(), false) {
                     @Override
